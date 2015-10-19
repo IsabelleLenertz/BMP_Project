@@ -13,6 +13,7 @@ using namespace std;
 
 int main() {
 	ifstream reader;
+	int* pWidth = new int;
 
 	reader.open("FF7.bmp", ios::binary);
 	if( reader.is_open() == true )
@@ -25,5 +26,12 @@ int main() {
 		cout << "Emergency exit." << endl;
 		return 0;
 	}
+
+	// Reads the width of the image
+	reader.seekg(18);
+	reader.read(reinterpret_cast<char*>(pWidth), 4);
+	cout << "The width of the image is: " << *pWidth << endl;
+
+
 	return 0;
 }
