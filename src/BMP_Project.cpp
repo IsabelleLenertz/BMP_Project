@@ -1,5 +1,5 @@
 //============================================================================
-// Name        : BMP_Project.cpp
+// Name        : BMPproject.cpp
 // Author      : Isabelle Delmas
 // Version     :
 // Copyright   : Your copyright notice
@@ -7,9 +7,23 @@
 //============================================================================
 
 #include <iostream>
+#include <fstream>
+
 using namespace std;
 
 int main() {
-	cout << "" << endl; // prints 
+	ifstream reader;
+
+	reader.open("FF7.bmp", ios::binary);
+	if( reader.is_open() == true )
+	{
+		cout << "The file was found." << endl;
+	}
+	else
+	{
+		cout << "The file could not be open." << endl;
+		cout << "Emergency exit." << endl;
+		return 0;
+	}
 	return 0;
 }
