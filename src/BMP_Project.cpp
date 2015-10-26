@@ -146,9 +146,6 @@ int main() {
 	}
 	if (paddingAvailable != 0){
 		cout << "Ready to read." << endl;
-		//reader.seekg(201);
-		//reader.get(tempChar);
-		//hidenMessage += TempChar;
 		// keeps track of the current line
 		for (int j = 0; j < *pHeight ; j++){
 			// Keeps track of the current padding byte within the current line
