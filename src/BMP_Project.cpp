@@ -21,6 +21,7 @@ int main() {
 	int paddingPerLine = 0;
 	int paddingAvailable =0;
 	int pixelArrayStartingAddress = 54; // for 24 bites BMP only
+	string message = "I am so cute!";
 	char* pMessage = new char;
 	*pMessage = 'a';
 
@@ -66,12 +67,36 @@ int main() {
 	// Closes the reader
 	reader.close();
 
+	// stores the addresses of the beginning of the padding bytes of each line.
+	int lineAddress [*pHeight];
+	lineAddress[0] = pixelArrayStartingAddress + (*pWidth)*bytePerPixel;
+	for (int i = 1; i < *pHeight; i++){
+		lineAddress[i] = pixelArrayStartingAddress + (*pWidth)*bytePerPixel*(i+1) + paddingPerLine*i;
+	}
+
 	// Inserting a char into the padding bytes.
-	writer.open("FF49-20.bmp", ios::binary);
+	writer.open("FF49-20.bmp", ios::out | ios::in | ios::binary);
 	if (writer.is_open() == true){
-		cout << "File was open, input : a" << endl;
-		writer.seekp(pixelArrayStartingAddress);
-		writer.write(pMessage, 1);
+		cout << "File was open." << endl;
+		unsigned int i = 0;
+		while (i <= message.size() ){
+		for (int j = 0; j < *pHeight ; j++){
+				for (int k = 0; k < paddingPerLine; k++){
+					// places the writing posistion at the current line (j), at the current padding byte (k)
+					writer.seekp(lineAddress[j] + (k) );
+					// write the current character (i)
+					writer.write(&message[i], 1);
+					// moves on to the next character.
+					i++;
+				}
+			}
+		}
+		//for (int i=0; i < message.length(); i++){
+		//	for (int j=0; j < paddingPerLine; j++, i++){
+		//		writer.seekp(pixelArrayStartingAddress + (*pWidth)*bytePerPixel);
+		//		writer.write(pMessage, 1);
+		//	}
+		//}
 	}
 	else{
 		cout << "Could not open file for input" << endl;
