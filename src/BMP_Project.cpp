@@ -25,17 +25,21 @@ int main() {
 	char* pMessage = new char;
 	*pMessage = 'a';
 
+	/*
+	 * EXCTRATIING USEFUL DATA FROM THE HEADER FILE
+	 */
+
 	reader.open("FF49-20.bmp", ios::binary);
 	if( reader.is_open() == true )
 	{
 		cout << "The file was found." << endl;
 	}
-	/*else
+	else
 	{
 		cout << "The file could not be open." << endl;
 		cout << "Emergency exit." << endl;
 		return 0;
-	}*/
+	}
 
 	// Reads the width of the image
 	reader.seekg(18);
@@ -78,6 +82,11 @@ int main() {
 	for (int i = 1; i < *pHeight; i++){
 		lineAddress[i] = pixelArrayStartingAddress + (*pWidth)*bytePerPixel*(i+1) + paddingPerLine*i;
 	}
+
+
+	/*
+	 * INSERTING A MESSAGE
+	 */
 
 	// Checks if there are enough bytes available for the message.
 	// Prints an error message if not enough bytes available
@@ -124,5 +133,49 @@ int main() {
 
 	//Closes the writer
 	writer.close();
+
+
+	/*
+	 * READING A MESSAGE
+	 */
+	// Opens the reader
+	reader.open("FF49-20.bmp", ios::binary);
+	string hidenMessage = "";
+
+	// end address of the file = the first byte that does not belong to the file anymore.
+	int endOfFile = lineAddress[*pHeight] + paddingPerLine;
+
+	if (reader.is_open() == true){
+		cout << "File was open to read a message." << endl;
+	}
+	else {
+		cout << "Could not open the file to read a message." << endl;
+		cout << "emergency exit" << endl;
+		return 0;
+	}
+	if (paddingAvailable != 0){
+		int i = 0;
+		// check if the end of the message was reached
+		while (i < endOfFile ){
+			// keeps track of the current line
+			for (int j = 0; j < *pHeight ; j++){
+				// Keeps track of the current padding byte within the current line
+				for (int k = 0; k < paddingPerLine; k++){
+					// places the writing position at the current line (j), at the current padding byte (k)
+					writer.seekp(lineAddress[j] + (k) );
+					// write the current character (i)
+					writer.write(&message[i], 1);
+					// moves on to the next character.
+					i++;
+				}
+			}
+		}
+		cout << "Your secret message is: " << endl;
+	}
+	else{
+		cout << "There are no padding bytes available to hide a message" << endl;
+	}
+
+
 	return 0;
 }
