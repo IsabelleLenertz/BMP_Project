@@ -57,7 +57,12 @@ int main() {
 	cout <<"Bytes per pixel: " << bytePerPixel << endl;
 
 	// Calculate the number of padding bytes per line (a line has to end with a multiple of 4 bytes)
-	paddingPerLine = 4-(*pWidth)*bytePerPixel%4;
+	if ((*pWidth)*bytePerPixel%4 == 0){
+		paddingPerLine = 0;
+	}
+	else {
+		paddingPerLine = 4-(*pWidth)*bytePerPixel%4;
+	}
 	cout << "Padding per line: " << paddingPerLine << endl;
 
 	// Calculate the number of padding bytes in the entire file.
@@ -74,32 +79,47 @@ int main() {
 		lineAddress[i] = pixelArrayStartingAddress + (*pWidth)*bytePerPixel*(i+1) + paddingPerLine*i;
 	}
 
-	// Inserting a char into the padding bytes.
-	writer.open("FF49-20.bmp", ios::out | ios::in | ios::binary);
-	if (writer.is_open() == true){
-		cout << "File was open." << endl;
-		unsigned int i = 0;
-		while (i <= message.size() ){
-		for (int j = 0; j < *pHeight ; j++){
-				for (int k = 0; k < paddingPerLine; k++){
-					// places the writing posistion at the current line (j), at the current padding byte (k)
-					writer.seekp(lineAddress[j] + (k) );
-					// write the current character (i)
-					writer.write(&message[i], 1);
-					// moves on to the next character.
-					i++;
+	// Checks if there are enough bytes available for the message.
+	// Prints an error message if not enough bytes available
+	if ( paddingAvailable < (int)message.size() ){
+		cout << "Message too long, please choose another image or change your message." << endl;
+		cout << "Size of the image: " << message.size() << " characters" << endl;
+		cout << "Padding bytes available in this image: " << paddingAvailable << " byte(s)" << endl;
+	}
+	// Else inserts the message character by character.
+	else{
+		// Inserting a char into the padding bytes.
+		writer.open("FF49-20.bmp", ios::out | ios::in | ios::binary);
+		if (writer.is_open() == true){
+			cout << "File was open." << endl;
+			int i = 0;
+			// check if the end of the message was reached
+			while (i <= (int)message.size() ){
+				// keeps track of the current lin
+				for (int j = 0; j < *pHeight ; j++){
+					// Keeps track of the current padding byte within the current line
+					for (int k = 0; k < paddingPerLine; k++){
+						// places the writing position at the current line (j), at the current padding byte (k)
+						writer.seekp(lineAddress[j] + (k) );
+						// write the current character (i)
+						writer.write(&message[i], 1);
+						// moves on to the next character.
+						i++;
+					}
 				}
 			}
 		}
+		// Is the file could not be opened
+		else{
+			cout << "Could not open file for input" << endl;
+		}
+
 		//for (int i=0; i < message.length(); i++){
 		//	for (int j=0; j < paddingPerLine; j++, i++){
 		//		writer.seekp(pixelArrayStartingAddress + (*pWidth)*bytePerPixel);
 		//		writer.write(pMessage, 1);
 		//	}
 		//}
-	}
-	else{
-		cout << "Could not open file for input" << endl;
 	}
 
 	//Closes the writer
