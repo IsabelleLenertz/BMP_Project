@@ -21,7 +21,7 @@ int main() {
 	int paddingPerLine = 0;
 	int paddingAvailable =0;
 	int pixelArrayStartingAddress = 54; // for 24 bites BMP only
-	string message = "I am so cute!";
+	string message = "Tralala PomPom";
 	char* pMessage = new char;
 	*pMessage = 'a';
 
@@ -92,7 +92,7 @@ int main() {
 	// Prints an error message if not enough bytes available
 	if ( paddingAvailable < (int)message.size() ){
 		cout << "Message too long, please choose another image or change your message." << endl;
-		cout << "Size of the image: " << message.size() << " characters" << endl;
+		cout << "Size of the message: " << message.size() << " characters" << endl;
 		cout << "Padding bytes available in this image: " << paddingAvailable << " byte(s)" << endl;
 	}
 	// Else inserts the message character by character.
@@ -121,14 +121,7 @@ int main() {
 		// Is the file could not be opened
 		else{
 			cout << "Could not open file for input" << endl;
-		}
-
-		//for (int i=0; i < message.length(); i++){
-		//	for (int j=0; j < paddingPerLine; j++, i++){
-		//		writer.seekp(pixelArrayStartingAddress + (*pWidth)*bytePerPixel);
-		//		writer.write(pMessage, 1);
-		//	}
-		//}
+		}// end of else
 	}
 
 	//Closes the writer
@@ -141,9 +134,7 @@ int main() {
 	// Opens the reader
 	reader.open("FF49-20.bmp", ios::binary);
 	string hidenMessage = "";
-
-	// end address of the file = the first byte that does not belong to the file anymore.
-	int endOfFile = lineAddress[*pHeight] + paddingPerLine;
+	char tempChar;
 
 	if (reader.is_open() == true){
 		cout << "File was open to read a message." << endl;
@@ -154,28 +145,29 @@ int main() {
 		return 0;
 	}
 	if (paddingAvailable != 0){
-		int i = 0;
-		// check if the end of the message was reached
-		while (i < endOfFile ){
-			// keeps track of the current line
-			for (int j = 0; j < *pHeight ; j++){
-				// Keeps track of the current padding byte within the current line
-				for (int k = 0; k < paddingPerLine; k++){
-					// places the writing position at the current line (j), at the current padding byte (k)
-					writer.seekp(lineAddress[j] + (k) );
-					// write the current character (i)
-					writer.write(&message[i], 1);
-					// moves on to the next character.
-					i++;
-				}
-			}
-		}
-		cout << "Your secret message is: " << endl;
-	}
+		cout << "Ready to read." << endl;
+		//reader.seekg(201);
+		//reader.get(tempChar);
+		//hidenMessage += TempChar;
+		// keeps track of the current line
+		for (int j = 0; j < *pHeight ; j++){
+			// Keeps track of the current padding byte within the current line
+			for (int k = 0; k < paddingPerLine; k++){
+				// places the writing position at the current line (j), at the current padding byte (k)
+				reader.seekg(lineAddress[j] + (k) );
+				// reads the current character and stores it temporary.
+				reader.get(tempChar);
+				// Adds the char to the message
+				hidenMessage += tempChar;
+			} // end of for
+		} // end of for
+
+		cout << "Your secret message is: " << hidenMessage << endl;
+	}// end of if
 	else{
 		cout << "There are no padding bytes available to hide a message" << endl;
 	}
 
-
+	cout << "Enf od program." << endl;
 	return 0;
 }
