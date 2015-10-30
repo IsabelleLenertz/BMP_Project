@@ -38,6 +38,10 @@ int main() {
 	{
 		cout << "The file could not be open." << endl;
 		cout << "Emergency exit." << endl;
+		delete pMessage;
+		delete pWidth ;
+		delete pHeight;
+		delete pBitesPerPixel;
 		return 0;
 	}
 
@@ -142,6 +146,11 @@ int main() {
 	else {
 		cout << "Could not open the file to read a message." << endl;
 		cout << "emergency exit" << endl;
+
+		delete pMessage;
+		delete pWidth ;
+		delete pHeight;
+		delete pBitesPerPixel;
 		return 0;
 	}
 	if (paddingAvailable != 0){
@@ -169,5 +178,13 @@ int main() {
 	}
 
 	cout << "Enf od program." << endl;
+
+	delete pMessage;
+	delete pWidth ;
+	delete pHeight;
+	delete pBitesPerPixel;
+
 	return 0;
 }
+
+
