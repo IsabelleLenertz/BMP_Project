@@ -70,6 +70,9 @@ bool PixelArrayIn::insertMessage(string message){
 		} // end of else
 	}// end of else
 
+	//Closes the writer
+	this->writer.close();
+
 	// the end of the function has been reached
 	// indicate success
 	return true;
