@@ -8,7 +8,7 @@
 #include "Header.hpp"
 
 Header::Header() {
-	this->valide = false;
+	this->valid = false;
 
 	// Sets all the attributes to 0
 	this->imageWidth = 0;
@@ -27,11 +27,11 @@ Header::Header(string address){
 	// reads the header of the BMP file and calculates the appropriate attributes
 	if (this->setup() == true){
 		// sets the validity flag to true if the file was open
-		this->valide = true;
+		this->valid = true;
 	}
 	else{
 		// sets the validity flag to false if the file was not open
-		this->valide = false;
+		this->valid = false;
 
 		// Sets all the attributes to 0
 		this->imageWidth = 0;
@@ -73,7 +73,7 @@ bool Header::setup(){
 	if( this->reader.is_open() == false ){
 		// Does not set any data if the file could not be open
 		// Changes the validity flag to false and exists the function
-		this->valide = false;
+		this->valid = false;
 
 		// deletes the pointer no longer in use.
 		delete pWidth ;
@@ -144,4 +144,36 @@ bool Header::setfileAddress(string newAddress){
 	else{
 		return false;
 	}
+}
+
+/*
+ * Accessors for the different attributes.
+ */
+bool Header::getValidity(){
+	return this->valid;
+}
+string Header::getFileAddress(){
+	return this->fileAddress;
+}
+int Header::getImageWidth(){
+	return this->imageWidth;
+}
+int Header::getImageHeight(){
+	return this->imageHeight;
+
+}
+int Header::getBytesPerPixel(){
+	return this->bytesPerPixel;
+}
+int Header::getLengthOfHeader(){
+	return this->lengthOfHeader;
+}
+int Header::getBeginningOfArray(){
+	return this->beginningOfArray;
+}
+int Header::getPaddingAvailable(){
+	return this->paddingAvailable;
+}
+int Header::getPaddingPerLine(){
+	return this->paddingPerLine;
 }

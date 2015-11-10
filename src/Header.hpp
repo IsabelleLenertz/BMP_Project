@@ -32,7 +32,7 @@ private:
 	int paddingPerLine;
 
 	// flag indicating if the header could read the information it needs from the file
-	bool valide;
+	bool valid;
 
 public:
 
@@ -63,6 +63,15 @@ public:
 	/*
 	 * Accessors for the different attributes.
 	 */
+	bool getValidity();
+	string getFileAddress();
+	int getImageWidth();
+	int getImageHeight();
+	int getBytesPerPixel();
+	int getLengthOfHeader();
+	int getBeginningOfArray();
+	int getPaddingAvailable();
+	int getPaddingPerLine();
 
 
 };
