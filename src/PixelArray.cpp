@@ -34,7 +34,7 @@ PixelArray::~PixelArray() {
 	delete this->pFileHeader;
 
 	// warn about the destruction of the object
-	cout << "You are destroying a PixeArray.";
+	cout << "You are destroying a PixeArray." << endl;
 }
 
 bool PixelArray::setFileAddress(string newAddress){

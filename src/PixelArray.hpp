@@ -19,14 +19,14 @@ class PixelArray {
 protected:
 	Header *pFileHeader;
 	bool valid;
-	string fileAddress;
-
 
 public:
 	PixelArray();
 	PixelArray(string newAddress);
 	virtual ~PixelArray();
 
+	// Sends the new Address to the Header, who initializes all the variable
+	// Changes the validity of the pixelArray
 	bool setFileAddress(string newAddress);
 };
 
