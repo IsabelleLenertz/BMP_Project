@@ -28,6 +28,7 @@ public:
 	// Sends the new Address to the Header, who initializes all the variable
 	// Changes the validity of the pixelArray
 	bool setFileAddress(string newAddress);
+	bool getValidity();
 };
 
 #endif /* PIXELARRAY_HPP_ */

@@ -50,5 +50,8 @@ bool PixelArray::setFileAddress(string newAddress){
 		return false;
 	}
 }
+bool PixelArray::getValidity(){
+	return this->valid;
+}
 
 
