@@ -29,6 +29,7 @@ public:
 	// Changes the validity of the pixelArray
 	bool setFileAddress(string newAddress);
 	bool getValidity();
+	int getMaxSizeMessage();
 };
 
 #endif /* PIXELARRAY_HPP_ */

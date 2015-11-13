@@ -20,6 +20,7 @@ InsertMessage::InsertMessage(string newAddress, string newMessage) {
 }
 InsertMessage::~InsertMessage() {
 	delete this->insertionObject;
+	cout << "You are deleting an InsertMessage Object" << endl;
 }
 
 bool InsertMessage::setImageAddress(string newAddress) {
@@ -48,11 +49,11 @@ bool InsertMessage::insertMessage(){
 	if ( (this->message != "") || (this->message != "") || (this->insertionObject != nullptr) ){
 		try{
 			// Inserts the message into the BMP file.
-			this->insertionObject->insertMessage(this->message);
-			returnvalue = true;
+			returnvalue = this->insertionObject->insertMessage(this->message);
 		}
 		// Catches the error thrown by the insertMessage function, the error class indicates the max size the image can hold.
 		catch (MessageTooLong & error){
+			// send the error to the user of the insertMessage class.
 			throw error;
 		}
 	}
@@ -61,5 +62,11 @@ bool InsertMessage::insertMessage(){
 	return returnvalue;
 }
 int InsertMessage::maxMessageSize(){
-	return 0;
+	int maxSize = 0;
+
+	if(this->insertionObject != nullptr){
+		maxSize =  this->insertionObject->getMaxSizeMessage();
+	}
+
+	return maxSize;
 }

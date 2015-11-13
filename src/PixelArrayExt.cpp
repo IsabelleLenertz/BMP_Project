@@ -11,7 +11,7 @@ PixelArrayExt::PixelArrayExt() {
 	// TODO Auto-generated constructor stub
 
 }
-PixelArrayExt::PixelArrayExt(string newAddress){
+PixelArrayExt::PixelArrayExt(string newAddress):PixelArray::PixelArray(newAddress){
 	this->setFileAddress(newAddress);
 }
 

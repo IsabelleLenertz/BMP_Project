@@ -45,7 +45,7 @@ Header::Header(string address){
 }
 
 Header::~Header() {
-	// TODO Auto-generated destructor stub
+	cout << "You are deleting a Header Object" << endl;
 }
 
 /*
@@ -82,6 +82,26 @@ bool Header::setup(){
 
 		// returns false to indicate that the file could be open
 		return false;
+	}
+	// Makes sure the file is a BMP file (ie starts with the characters BM)
+	else{
+		string checking = "";
+		char tempChar;
+
+		// Reads the first character
+		this->reader.seekg(0);
+		this->reader.get(tempChar);
+		checking += tempChar;
+
+		// Reads the second character
+		this->reader.seekg(1);
+		this->reader.get(tempChar);
+		checking += tempChar;
+
+		// If the file is not a BMP file, does not change valid to true and returns false to indicate failure.
+		if (checking != "BM"){
+			return false;
+		}
 	}
 
 	// Reads the width of the image

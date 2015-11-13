@@ -54,4 +54,7 @@ bool PixelArray::getValidity(){
 	return this->valid;
 }
 
+int PixelArray::getMaxSizeMessage(){
+	return this->pFileHeader->getPaddingAvailable();
+}
 

@@ -10,8 +10,9 @@
 PixelArrayIn::PixelArrayIn() {
 }
 
-PixelArrayIn::PixelArrayIn(string newAddress) {
+PixelArrayIn::PixelArrayIn(string newAddress):PixelArray::PixelArray(newAddress) {
 	this->setFileAddress(newAddress);
+
 }
 PixelArrayIn::~PixelArrayIn() {
 	cout << "You are destroying a PixelArrayIn." << endl;
