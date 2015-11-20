@@ -17,19 +17,21 @@ int main() {
 	int* pWidth = new int;
 	int* pHeight = new int;
 	int* pBitesPerPixel = new int;
+	int* pEndAddress = new int;
 	int bytePerPixel = 0;
 	int paddingPerLine = 0;
 	int paddingAvailable =0;
 	int pixelArrayStartingAddress = 54; // for 24 bites BMP only
-	string message = "Tralala PomPom";
+	string message = "EFGH";
 	char* pMessage = new char;
+	string file = "FF8-8.bmp";
 	*pMessage = 'a';
 
 	/*
 	 * EXCTRATIING USEFUL DATA FROM THE HEADER FILE
 	 */
 
-	reader.open("FF49-20.bmp", ios::binary);
+	reader.open("FF8-8.bmp", ios::binary);
 	if( reader.is_open() == true )
 	{
 		cout << "The file was found." << endl;
@@ -40,6 +42,11 @@ int main() {
 		cout << "Emergency exit." << endl;
 		return 0;
 	}
+
+	// Reads the total size of the file
+	reader.seekg(2);
+	reader.read(reinterpret_cast<char*>(pEndAddress), 4);
+	cout << "size of the file is: " << *pEndAddress << " bytes" << endl;
 
 	// Reads the width of the image
 	reader.seekg(18);
@@ -76,13 +83,20 @@ int main() {
 	// Closes the reader
 	reader.close();
 
+	// Calculates the address of the beginning of the pixel Array
+	long totalBytesForPixelArray = ((*pWidth)*bytePerPixel + paddingPerLine)*(*pHeight);
+	pixelArrayStartingAddress = *pEndAddress - totalBytesForPixelArray;
+	cout << "The pixel array starts at address: " << pixelArrayStartingAddress << endl;
+
 	// stores the addresses of the beginning of the padding bytes of each line.
 	int lineAddress [*pHeight];
 	lineAddress[0] = pixelArrayStartingAddress + (*pWidth)*bytePerPixel;
 	for (int i = 1; i < *pHeight; i++){
 		lineAddress[i] = pixelArrayStartingAddress + (*pWidth)*bytePerPixel*(i+1) + paddingPerLine*i;
 	}
-
+	for (int i = 0; i < *pHeight ; i++){
+		cout << "Padding line" << i << ", address: " << lineAddress[i] << endl;
+	}
 
 	/*
 	 * INSERTING A MESSAGE
@@ -95,28 +109,30 @@ int main() {
 		cout << "Size of the message: " << message.size() << " characters" << endl;
 		cout << "Padding bytes available in this image: " << paddingAvailable << " byte(s)" << endl;
 	}
-	// Else inserts the message character by character.
+
+	// Else inserts the message into the BMP file character by character.
 	else{
 		// Inserting a char into the padding bytes.
-		writer.open("FF49-20.bmp", ios::out | ios::in | ios::binary);
+		writer.open("FF8-8.bmp", ios::out | ios::in | ios::binary);
 		if (writer.is_open() == true){
-			cout << "File was open." << endl;
+			cout << "The file is open." << endl;
 			int i = 0;
-			// check if the end of the message was reached
-			while (i <= (int)message.size() ){
-				// keeps track of the current lin
-				for (int j = 0; j < *pHeight ; j++){
-					// Keeps track of the current padding byte within the current line
-					for (int k = 0; k < paddingPerLine; k++){
+			// keeps track of the current line
+			for (int j = 0; j < *pHeight ; j++){
+				// Keeps track of the current padding byte within the current line
+				for (int k = 0; k < paddingPerLine; k++){
+					// check if the end of the message was reached
+					if (i <= (int)message.size()){
 						// places the writing position at the current line (j), at the current padding byte (k)
 						writer.seekp(lineAddress[j] + (k) );
 						// write the current character (i)
-						writer.write(&message[i], 1);
+						writer.put(message[i]);
+						cout << "inserted a char. i = " << i << endl;
 						// moves on to the next character.
 						i++;
-					}
-				}
-			}
+					}// if
+				}// for
+			}// for
 		}
 		// Is the file could not be opened
 		else{
@@ -132,6 +148,8 @@ int main() {
 	 * READING A MESSAGE
 	 */
 	// Opens the reader
+
+/*
 	reader.open("FF49-20.bmp", ios::binary);
 	string hidenMessage = "";
 	char tempChar;
@@ -164,7 +182,8 @@ int main() {
 	else{
 		cout << "There are no padding bytes available to hide a message" << endl;
 	}
+	*/
 
-	cout << "Enf od program." << endl;
+	cout << "End of program." << endl;
 	return 0;
 }
