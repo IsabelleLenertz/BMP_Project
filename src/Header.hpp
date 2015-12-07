@@ -22,12 +22,10 @@ private:
 	int imageWidth;
 	int imageHeight;
 	int bytesPerPixel;
-	int lengthOfHeader;
+	int endAddress; // size of the bmp file (ie address of the last byte)
 
 	// Data to be calculated from the previous ones.
 	int beginningOfArray;
-	//bool valideAddress; //could not find a use for this one yet
-	//int bytesPerLine; //could not find a use for this one yet
 	int paddingAvailable;
 	int paddingPerLine;
 

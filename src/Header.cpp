@@ -14,7 +14,6 @@ Header::Header() {
 	this->imageWidth = 0;
 	this->imageHeight = 0;
 	this->bytesPerPixel = 0;
-	this->lengthOfHeader = 0;
 	this->beginningOfArray = 0;
 	this->paddingAvailable = 0;
 	this->paddingPerLine = 0;
@@ -37,7 +36,6 @@ Header::Header(string address){
 		this->imageWidth = 0;
 		this->imageHeight = 0;
 		this->bytesPerPixel = 0;
-		this->lengthOfHeader = 0;
 		this->beginningOfArray = 0;
 		this->paddingAvailable = 0;
 		this->paddingPerLine = 0;
@@ -48,22 +46,18 @@ Header::~Header() {
 	cout << "You are deleting a Header Object" << endl;
 }
 
-/*
- * Reads the header of a bmp file, and sets up all relating the attributes.
- * Returns true if the reader was able to open the bmp file.
- * Returns true if the reader could not open the bmp file.
- */
+//
+// Reads the header of a bmp file, and sets up all related the attributes.
+// Returns true if the reader was able to open the bmp file.
+// Returns true if the reader could not open the bmp file.
+//
+
 bool Header::setup(){
 	// fstream.read needs a pointer, the data will be copied into the right attribute after reading
 	int *pWidth = new int;
 	int *pHeight = new int;
 	int *pBitesPerPixel = new int;
-
-
-	// FOR 24 BITES BMP ONLY
-	this->beginningOfArray = 54; // for 24 bites BMP only
-	this->lengthOfHeader = 53; // for 24 bites BMP only
-
+	int *pEndAddress = new int;
 
 	/*
 	 * EXCTRATIING USEFUL DATA FROM THE HEADER FILE
@@ -79,10 +73,12 @@ bool Header::setup(){
 		delete pWidth ;
 		delete pHeight;
 		delete pBitesPerPixel;
+		delete pEndAddress;
 
 		// returns false to indicate that the file could be open
 		return false;
 	}
+
 	// Makes sure the file is a BMP file (ie starts with the characters BM)
 	else{
 		string checking = "";
@@ -104,6 +100,17 @@ bool Header::setup(){
 		}
 	}
 
+	//
+	// Reading data from the file header (size, width, height, bites per pixel)
+	//
+
+	// Reads the total size of the file
+	reader.seekg(2);
+	reader.read(reinterpret_cast<char*>(pEndAddress), 4);
+	cout << "size of the file is: " << *pEndAddress << " bytes" << endl;
+	// Sorts it in the appropriate attribute
+	this->endAddress = *pEndAddress;
+
 	// Reads the width of the image
 	this->reader.seekg(18);
 	this->reader.read(reinterpret_cast<char*>(pWidth), 4);
@@ -120,14 +127,14 @@ bool Header::setup(){
 	reader.seekg(28);
 	reader.read(reinterpret_cast<char*>(pBitesPerPixel), 4);
 
-	/*
-	 * Calculating bytesPerLine and paddingBytesAvailable;
-	 */
+	//
+	// Calculating bytesPerLine, paddingBytesAvailable, and endAddress
+	//
 
-	// Calculate the number of Bytes per pixel
+	// Calculates the number of Bytes per pixel
 	this->bytesPerPixel = *pBitesPerPixel/8;
 
-	// Calculate the number of padding bytes per line (a line has to end with a multiple of 4 bytes)
+	// Calculates the number of padding bytes per line (a line has to end with a multiple of 4 bytes)
 	if ((*pWidth)*bytesPerPixel%4 == 0){
 		this->paddingPerLine = 0;
 	}
@@ -135,8 +142,16 @@ bool Header::setup(){
 		this->paddingPerLine = 4-(*pWidth)*(this->bytesPerPixel)%4;
 	}
 
-	// Calculate the number of padding bytes in the entire file.
+	// Calculates the number of padding bytes in the entire file.
 	this->paddingAvailable = paddingPerLine*(*pHeight);
+
+	// Calculates the address of the beginning of the pixel Array
+	int totalBytesForPixelArray = ((*pWidth)*this->bytesPerPixel + this->paddingPerLine)*(*pHeight);
+	this->beginningOfArray = *pEndAddress - totalBytesForPixelArray;
+
+	//
+	// Cleaning up before existing
+	//
 
 	// Closes the reader
 	reader.close();
@@ -145,6 +160,7 @@ bool Header::setup(){
 	delete pWidth ;
 	delete pHeight;
 	delete pBitesPerPixel;
+	delete pEndAddress;
 
 	// returns true to signify the file was properly open
 	return true;
@@ -167,7 +183,7 @@ bool Header::setfileAddress(string newAddress){
 }
 
 /*
- * Accessors for the different attributes.
+ * Assessors for the different attributes.
  */
 bool Header::getValidity(){
 	return this->valid;
@@ -184,9 +200,6 @@ int Header::getImageHeight(){
 }
 int Header::getBytesPerPixel(){
 	return this->bytesPerPixel;
-}
-int Header::getLengthOfHeader(){
-	return this->lengthOfHeader;
 }
 int Header::getBeginningOfArray(){
 	return this->beginningOfArray;

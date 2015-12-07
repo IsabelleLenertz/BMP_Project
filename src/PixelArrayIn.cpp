@@ -11,8 +11,8 @@ PixelArrayIn::PixelArrayIn() {
 }
 
 PixelArrayIn::PixelArrayIn(string newAddress):PixelArray::PixelArray(newAddress) {
-	this->setFileAddress(newAddress);
-
+	// No need to call set file address, the address is set by the parent class constructor.
+	// The validity is also set by the base class constructor.
 }
 PixelArrayIn::~PixelArrayIn() {
 	cout << "You are destroying a PixelArrayIn." << endl;
@@ -49,27 +49,34 @@ bool PixelArrayIn::insertMessage(string message){
 		// if the file could be opened
 		if (this->writer.is_open() == true){
 			int charCounter = 0; // keeps track of the number of characters inserted
-			// check if the end of the message was reached
-			while ( charCounter <= (int)message.size() ){
-				// keeps track of the current line
-				for (int j = 0; j < this->pFileHeader->getImageHeight(); j++){
-					// Keeps track of the current padding byte within the current line
-					for (int k = 0; k < this->pFileHeader->getPaddingPerLine(); k++){
-						// places the writing position at the current line (j), at the current padding byte (k)
-						this->writer.seekp(lineAddress[j] + (k) );
-						// write the current character (i)
-						this->writer.write(&message[charCounter], 1);
-						// moves on to the next character.
-						charCounter++;
-					}// end of for
-				}// end of for
-			}// end of while
-		}// end of if
-		// if the file could not be opened
+
+			// Goes trough all the line available in the bmp file
+			for (int j = 0; j < this->pFileHeader->getImageHeight(); j++){
+
+				// Goes trough all the pabbying bytes in each line.
+				for (int k = 0; k < this->pFileHeader->getPaddingPerLine(); k++){
+
+					// Check if the end of the message is reached
+					if ( charCounter <= (int)message.size() ){
+					// places the writing position at the current line (j), at the current padding byte (k)
+					this->writer.seekp(lineAddress[j] + (k) );
+					// write the current character (i)
+					this->writer.write(&message[charCounter], 1);
+					// moves on to the next character.
+					charCounter++;
+
+					} // if
+				}// for (padding bytes)
+			}// for (line)
+		}// if (file was open)
+
+		// If the file could not be opened
 		else{
+			// Exists and returns false to indicate failure.
+			this->writer.close();
 			return false;
-		} // end of else
-	}// end of else
+		} // else
+	}// else
 
 	//Closes the writer
 	this->writer.close();
@@ -77,4 +84,5 @@ bool PixelArrayIn::insertMessage(string message){
 	// the end of the function has been reached
 	// indicate success
 	return true;
+
 }// end of insertMessage

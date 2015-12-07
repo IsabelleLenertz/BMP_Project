@@ -39,9 +39,8 @@ string PixelArrayExt::extractMessage() {
 	}
 	// throws an exception if there is no padding avaiable to read a message.
 	else if (this->pFileHeader->getPaddingAvailable() == 0 ){
-		throw "No padding available";
 		// indicates failure
-		return "";
+		return "No padding available, there cannot be any message in this file.";
 	}
 	else{
 
